@@ -58,7 +58,7 @@ func decodeClientResponse(r []byte, dst interface{}) error {
 	var c clientResponse
 	if err := ffjson.NewDecoder().Decode(r, &c); err != nil {
 		return &Error{
-			Code:    E_PARSE,
+			Code:    JErrorParse,
 			Message: err.Error(),
 		}
 	}
@@ -66,7 +66,7 @@ func decodeClientResponse(r []byte, dst interface{}) error {
 		jsonErr := &Error{}
 		if err := ffjson.Unmarshal(*c.Error, jsonErr); err != nil {
 			return &Error{
-				Code:    E_INTERNAL,
+				Code:    JErrorInternal,
 				Message: string(*c.Error),
 			}
 		}
@@ -74,13 +74,13 @@ func decodeClientResponse(r []byte, dst interface{}) error {
 	}
 	if c.Result == nil {
 		return &Error{
-			Code:    E_SERVER,
+			Code:    JErrorServer,
 			Message: ErrNullResult.Error(),
 		}
 	}
 	if err := ffjson.Unmarshal(*c.Result, &dst); err != nil {
 		return &Error{
-			Code:    E_INTERNAL,
+			Code:    JErrorInternal,
 			Message: ErrNullResult.Error(),
 		}
 	}

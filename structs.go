@@ -12,12 +12,19 @@ import (
 type ErrorCode int
 
 const (
-	E_PARSE          ErrorCode = -32700
-	E_INVALID_REQ    ErrorCode = -32600
-	E_NO_METHOD      ErrorCode = -32601
-	E_INVALID_PARAMS ErrorCode = -32602
-	E_INTERNAL       ErrorCode = -32603
-	E_SERVER         ErrorCode = -32000
+	// JErrorParse Parse error - Invalid JSON was received by the server.
+	// An error occurred on the server while parsing the JSON text.
+	JErrorParse ErrorCode = -32700
+	// JErrorInvalidReq Invalid Request - The JSON sent is not a valid Request object.
+	JErrorInvalidReq ErrorCode = -32600
+	// JErrorNoMethod Method not found - The method does not exist / is not available.
+	JErrorNoMethod ErrorCode = -32601
+	// JErrorInvalidParams Invalid params - Invalid method parameter(s).
+	JErrorInvalidParams ErrorCode = -32602
+	// JErrorInternal Internal error - Internal JSON-RPC error.
+	JErrorInternal ErrorCode = -32603
+	// JErrorServer Server error - Reserved for implementation-defined server-errors.
+	JErrorServer ErrorCode = -32000
 )
 
 // ErrNullResult it returns error when result answer is empty
