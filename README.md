@@ -20,4 +20,31 @@ This package is still in development
 
 ## Examples
 
+```golang
+package main
+
+import (
+	"github.com/riftbit/jrpc2Client"
+)
+
+type TestReply struct {
+	LogID string `json:"log_id"`
+}
+
+func main() {
+	client := NewClient()
+
+	client.SetBaseURL("http://127.0.0.1:65001")
+	client.SetUserAgent("JsonRPC Test Client")
+	client.SetBasicAuth("user", "password")
+
+	dstT := &TestReply{}
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_1"}, dstT)
+	if err != nil {
+		panic(err)
+	}
+	println(dstT.LogID)
+}
+```
+
 ### Benchmark results
