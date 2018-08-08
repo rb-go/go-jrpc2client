@@ -1,4 +1,4 @@
-package jrpc2Client
+package jrpc2client
 
 import (
 	"math/rand"
@@ -44,7 +44,7 @@ func setHeadersFromConfig(clientCfg *Client, req *fasthttp.Request) {
 // encodeClientRequest encodes parameters for a JSON-RPC client request.
 func encodeClientRequest(method string, args interface{}) ([]byte, error) {
 	c := &clientRequest{
-		Id:      uint64(rand.Int63()),
+		ID:      uint64(rand.Int63()),
 		Version: "2.0",
 		Method:  method,
 		Params:  args,

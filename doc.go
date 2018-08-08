@@ -11,4 +11,4 @@
 	Example can be found only in client_test.go at this moment
 */
 
-package jrpc2Client
+package jrpc2client

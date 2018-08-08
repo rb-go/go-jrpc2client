@@ -1,4 +1,4 @@
-package jrpc2Client
+package jrpc2client
 
 import (
 	"errors"
@@ -27,7 +27,7 @@ var ErrNullResult = errors.New("result is null")
 type Client struct {
 	UserAgent      string
 	Authentificate string
-	BaseUrl        string
+	BaseURL        string
 	Logger         *logrus.Logger
 }
 
@@ -44,7 +44,7 @@ type clientRequest struct {
 
 	// The request id. This can be of any type. It is used to match the
 	// response with the request that it is replying to.
-	Id uint64 `json:"id"`
+	ID uint64 `json:"id"`
 }
 
 // clientResponse represents a JSON-RPC response returned to a client.

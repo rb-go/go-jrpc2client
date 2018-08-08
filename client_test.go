@@ -1,4 +1,4 @@
-package jrpc2Client
+package jrpc2client
 
 import (
 	"io/ioutil"

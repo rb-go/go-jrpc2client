@@ -1,4 +1,4 @@
-package jrpc2Client
+package jrpc2client
 
 import (
 	"encoding/base64"
@@ -28,7 +28,7 @@ func NewClientWithLogger(logger *logrus.Logger) *Client {
 
 // SetBaseURL setting basic url for API
 func (cl *Client) SetBaseURL(baseURL string) {
-	cl.BaseUrl = baseURL
+	cl.BaseURL = baseURL
 }
 
 // SetBasicAuth setting basic auth header
@@ -44,7 +44,7 @@ func (cl *Client) SetUserAgent(userAgent string) {
 // Call run remote procedure on JSON-RPC 2.0 API
 func (cl *Client) Call(urlPath string, method string, args interface{}, dst interface{}) error {
 	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(cl.BaseUrl + urlPath)
+	req.SetRequestURI(cl.BaseURL + urlPath)
 
 	setHeadersFromConfig(cl, req)
 
