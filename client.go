@@ -8,8 +8,8 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 )
 
-func NewClient() *ClientConfig {
-	return &ClientConfig{
+func NewClient() *Client {
+	return &Client{
 		Logger: &logrus.Logger{
 			Out:       os.Stdout,
 			Formatter: &logrus.JSONFormatter{DisableTimestamp: false},
@@ -18,29 +18,29 @@ func NewClient() *ClientConfig {
 	}
 }
 
-func NewClientWithLogger(logger *logrus.Logger) *ClientConfig {
-	return &ClientConfig{
+func NewClientWithLogger(logger *logrus.Logger) *Client {
+	return &Client{
 		Logger: logger,
 	}
 }
 
-func (cl *ClientConfig) SetLogger(logger *logrus.Logger) {
+func (cl *Client) SetLogger(logger *logrus.Logger) {
 	cl.Logger = logger
 }
 
-func (cl *ClientConfig) SetBaseURL(baseURL string) {
+func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseUrl = baseURL
 }
 
-func (cl *ClientConfig) SetBasicAuth(login string, password string) {
+func (cl *Client) SetBasicAuth(login string, password string) {
 	cl.Authentificate = "Basic " + base64.StdEncoding.EncodeToString([]byte(login+":"+password))
 }
 
-func (cl *ClientConfig) SetUserAgent(userAgent string) {
+func (cl *Client) SetUserAgent(userAgent string) {
 	cl.UserAgent = userAgent
 }
 
-func (cl *ClientConfig) Call(urlPath string, method string, args interface{}, dst interface{}) error {
+func (cl *Client) Call(urlPath string, method string, args interface{}, dst interface{}) error {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI(cl.BaseUrl + urlPath)
 
@@ -72,11 +72,11 @@ func (cl *ClientConfig) Call(urlPath string, method string, args interface{}, ds
 	return decodeClientResponse(resp.Body(), dst)
 }
 
-func (cl *ClientConfig) BatchCall(urlPath string, method string, args interface{}) {
+func (cl *Client) BatchCall(urlPath string, method string, args interface{}) {
 
 }
 
-func (cl *ClientConfig) AsyncCall(ch chan<- interface{}, urlPath string, method string, args interface{}) {
+func (cl *Client) AsyncCall(ch chan<- interface{}, urlPath string, method string, args interface{}) {
 	var result interface{}
 	ch <- result
 }

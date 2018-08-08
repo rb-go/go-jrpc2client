@@ -12,7 +12,7 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 )
 
-func debugLogging(clientCfg *ClientConfig, fields logrus.Fields, message string) {
+func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
 	if clientCfg.Logger.Level == logrus.DebugLevel {
 
 		for i, v := range fields {
@@ -29,7 +29,7 @@ func debugLogging(clientCfg *ClientConfig, fields logrus.Fields, message string)
 	}
 }
 
-func setHeadersFromConfig(clientCfg *ClientConfig, req *fasthttp.Request) {
+func setHeadersFromConfig(clientCfg *Client, req *fasthttp.Request) {
 	if clientCfg.UserAgent != "" {
 		req.Header.SetUserAgent(clientCfg.UserAgent)
 	} else {
