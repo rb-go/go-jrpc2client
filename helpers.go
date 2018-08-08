@@ -52,37 +52,24 @@ func encodeClientRequest(method string, args interface{}) ([]byte, error) {
 	return ffjson.Marshal(c)
 }
 
-// decodeClientResponse decodes the response body of a client request into
-// the interface reply.
+// decodeClientResponse decodes the response body of a client request into the interface reply.
 func decodeClientResponse(r []byte, dst interface{}) error {
 	var c clientResponse
 	if err := ffjson.NewDecoder().Decode(r, &c); err != nil {
-		return &Error{
-			Code:    JErrorParse,
-			Message: err.Error(),
-		}
+		return &Error{Code: JErrorParse, Message: err.Error()}
 	}
 	if c.Error != nil {
 		jsonErr := &Error{}
 		if err := ffjson.Unmarshal(*c.Error, jsonErr); err != nil {
-			return &Error{
-				Code:    JErrorInternal,
-				Message: string(*c.Error),
-			}
+			return &Error{Code: JErrorInternal, Message: string(*c.Error)}
 		}
 		return jsonErr
 	}
 	if c.Result == nil {
-		return &Error{
-			Code:    JErrorServer,
-			Message: ErrNullResult.Error(),
-		}
+		return &Error{Code: JErrorServer, Message: ErrNullResult.Error()}
 	}
 	if err := ffjson.Unmarshal(*c.Result, &dst); err != nil {
-		return &Error{
-			Code:    JErrorInternal,
-			Message: ErrNullResult.Error(),
-		}
+		return &Error{Code: JErrorInternal, Message: ErrNullResult.Error()}
 	}
 	return nil
 }
