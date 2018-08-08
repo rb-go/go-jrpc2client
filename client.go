@@ -8,8 +8,8 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 )
 
-func NewClient() *clientConfig {
-	return &clientConfig{
+func NewClient() *ClientConfig {
+	return &ClientConfig{
 		Logger: &logrus.Logger{
 			Out:       os.Stdout,
 			Formatter: &logrus.JSONFormatter{DisableTimestamp: false},
@@ -18,29 +18,29 @@ func NewClient() *clientConfig {
 	}
 }
 
-func NewClientWithLogger(logger *logrus.Logger) *clientConfig {
-	return &clientConfig{
+func NewClientWithLogger(logger *logrus.Logger) *ClientConfig {
+	return &ClientConfig{
 		Logger: logger,
 	}
 }
 
-func (cl *clientConfig) SetLogger(logger *logrus.Logger) {
+func (cl *ClientConfig) SetLogger(logger *logrus.Logger) {
 	cl.Logger = logger
 }
 
-func (cl *clientConfig) SetBaseURL(baseURL string) {
+func (cl *ClientConfig) SetBaseURL(baseURL string) {
 	cl.BaseUrl = baseURL
 }
 
-func (cl *clientConfig) SetBasicAuth(login string, password string) {
+func (cl *ClientConfig) SetBasicAuth(login string, password string) {
 	cl.Authentificate = "Basic " + base64.StdEncoding.EncodeToString([]byte(login+":"+password))
 }
 
-func (cl *clientConfig) SetUserAgent(userAgent string) {
+func (cl *ClientConfig) SetUserAgent(userAgent string) {
 	cl.UserAgent = userAgent
 }
 
-func (cl *clientConfig) Call(urlPath string, method string, args interface{}, dst interface{}) error {
+func (cl *ClientConfig) Call(urlPath string, method string, args interface{}, dst interface{}) error {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI(cl.BaseUrl + urlPath)
 
@@ -72,11 +72,11 @@ func (cl *clientConfig) Call(urlPath string, method string, args interface{}, ds
 	return decodeClientResponse(resp.Body(), dst)
 }
 
-func (cl *clientConfig) BatchCall(urlPath string, method string, args interface{}) {
+func (cl *ClientConfig) BatchCall(urlPath string, method string, args interface{}) {
 
 }
 
-func (cl *clientConfig) AsyncCall(ch chan<- interface{}, urlPath string, method string, args interface{}) {
+func (cl *ClientConfig) AsyncCall(ch chan<- interface{}, urlPath string, method string, args interface{}) {
 	var result interface{}
 	ch <- result
 }

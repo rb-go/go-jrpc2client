@@ -21,7 +21,7 @@ const (
 
 var ErrNullResult = errors.New("result is null")
 
-type clientConfig struct {
+type ClientConfig struct {
 	UserAgent      string
 	Authentificate string
 	BaseUrl        string
