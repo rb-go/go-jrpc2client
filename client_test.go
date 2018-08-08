@@ -25,6 +25,9 @@ type TestReply struct {
 
 // Test Method to test
 func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
+	if args.ID == "" {
+		return &jsonrpc2.Error{Code: jsonrpc2.E_BAD_PARAMS, Message: "ID should not be empty"}
+	}
 	reply.LogID = args.ID
 	return nil
 }
@@ -50,7 +53,7 @@ func TestPrepare(t *testing.T) {
 	go fasthttp.ListenAndServe(":65001", reqHandler)
 }
 
-func TestBasicClientError(t *testing.T) {
+func TestBasicClientErrorOnWrongAddress(t *testing.T) {
 
 	client := NewClient()
 
@@ -58,7 +61,35 @@ func TestBasicClientError(t *testing.T) {
 	client.SetUserAgent("JsonRPC Test Client")
 
 	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClient"}, dstT)
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnWrongAddress"}, dstT)
+	if err == nil {
+		t.Error(errors.New("expected error but not received"))
+	}
+}
+
+func TestBasicClientErrorOnAPIFormat(t *testing.T) {
+
+	client := NewClient()
+
+	client.SetBaseURL("http://yandex.ru")
+	client.SetUserAgent("JsonRPC Test Client")
+
+	dstT := &TestReply{}
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnAPIFormat"}, dstT)
+	if err == nil {
+		t.Error(errors.New("expected error but not received"))
+	}
+}
+
+func TestBasicClientErrorOnAPIAnser(t *testing.T) {
+
+	client := NewClient()
+
+	client.SetBaseURL("http://127.0.0.1:65001")
+	client.SetUserAgent("JsonRPC Test Client")
+
+	dstT := &TestReply{}
+	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstT)
 	if err == nil {
 		t.Error(errors.New("expected error but not received"))
 	}
