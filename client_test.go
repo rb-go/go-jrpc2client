@@ -1,11 +1,9 @@
-package jrpc2_client
+package jrpc2Client
 
 import (
-	"testing"
-
-	"os"
-
 	"io/ioutil"
+	"os"
+	"testing"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"

@@ -1,4 +1,4 @@
-package jrpc2_client
+package jrpc2Client
 
 import (
 	"encoding/base64"
@@ -8,6 +8,7 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 )
 
+// NewClient returns new configured Client to start work with JSON-RPC 2.0 protocol
 func NewClient() *Client {
 	return &Client{
 		Logger: &logrus.Logger{
@@ -18,28 +19,29 @@ func NewClient() *Client {
 	}
 }
 
+// NewClientWithLogger returns new configured Client with custom Logger configureation (based on Sirupsen/logrus) to start work with JSON-RPC 2.0 protocol
 func NewClientWithLogger(logger *logrus.Logger) *Client {
 	return &Client{
 		Logger: logger,
 	}
 }
 
-func (cl *Client) SetLogger(logger *logrus.Logger) {
-	cl.Logger = logger
-}
-
+// SetBaseURL setting basic url for API
 func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseUrl = baseURL
 }
 
+// SetBasicAuth setting basic auth header
 func (cl *Client) SetBasicAuth(login string, password string) {
 	cl.Authentificate = "Basic " + base64.StdEncoding.EncodeToString([]byte(login+":"+password))
 }
 
+// SetUserAgent setting custom User Agent header
 func (cl *Client) SetUserAgent(userAgent string) {
 	cl.UserAgent = userAgent
 }
 
+// Call run remote procedure on JSON-RPC 2.0 API
 func (cl *Client) Call(urlPath string, method string, args interface{}, dst interface{}) error {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI(cl.BaseUrl + urlPath)
@@ -72,6 +74,8 @@ func (cl *Client) Call(urlPath string, method string, args interface{}, dst inte
 	return decodeClientResponse(resp.Body(), dst)
 }
 
+/*
+This methods
 func (cl *Client) BatchCall(urlPath string, method string, args interface{}) {
 
 }
@@ -80,3 +84,4 @@ func (cl *Client) AsyncCall(ch chan<- interface{}, urlPath string, method string
 	var result interface{}
 	ch <- result
 }
+*/

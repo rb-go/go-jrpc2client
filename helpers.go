@@ -1,4 +1,4 @@
-package jrpc2_client
+package jrpc2Client
 
 import (
 	"math/rand"
@@ -33,7 +33,7 @@ func setHeadersFromConfig(clientCfg *Client, req *fasthttp.Request) {
 	if clientCfg.UserAgent != "" {
 		req.Header.SetUserAgent(clientCfg.UserAgent)
 	} else {
-		req.Header.SetUserAgent(clientCfg.UserAgent)
+		req.Header.SetUserAgent("RIFTBIT-GOLANG-JRPC2-CLIENT")
 	}
 
 	if clientCfg.Authentificate != "" {

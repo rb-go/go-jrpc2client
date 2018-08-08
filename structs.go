@@ -1,4 +1,4 @@
-package jrpc2_client
+package jrpc2Client
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+// ErrorCode type for error codes
 type ErrorCode int
 
 const (
@@ -19,8 +20,10 @@ const (
 	E_SERVER         ErrorCode = -32000
 )
 
+// ErrNullResult it returns error when result answer is empty
 var ErrNullResult = errors.New("result is null")
 
+// Client basic struct that contains all method to work with JSON-RPC 2.0 protocol
 type Client struct {
 	UserAgent      string
 	Authentificate string
@@ -51,6 +54,7 @@ type clientResponse struct {
 	Error   *json.RawMessage `json:"error"`
 }
 
+// Error basic error struct to process API errors
 type Error struct {
 	// A Number that indicates the error type that occurred.
 	Code ErrorCode `json:"code"` /* required */
@@ -63,6 +67,7 @@ type Error struct {
 	Data interface{} `json:"data"` /* optional */
 }
 
+// Error returns string based error
 func (e *Error) Error() string {
 	return e.Message
 }
