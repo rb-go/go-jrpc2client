@@ -60,7 +60,7 @@ func (cl *Client) DeleteCustomHeader(headerName string) {
 
 // SetBasicAuthHeader setting basic auth header
 func (cl *Client) SetBasicAuthHeader(login string, password string) {
-	cl.SetCustomHeader("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(login+":"+password)))
+	cl.SetCustomAuthHeader("Basic", base64.StdEncoding.EncodeToString([]byte(login+":"+password)))
 }
 
 // SetCustomAuthHeader setting custom auth header with type of auth and auth data

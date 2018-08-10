@@ -2,20 +2,19 @@ package jrpc2client
 
 import (
 	"math/rand"
-
 	"reflect"
-
 	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/pquerna/ffjson/ffjson"
 )
 
-func printObject(v interface{}) string {
-	res2B, _ := ffjson.Marshal(v)
-	return string(res2B)
-}
+// func printObject(v interface{}) string {
+// 	res2B, _ := ffjson.Marshal(v)
+// 	return string(res2B)
+// }
 
+// debugLogging method to show debug message with pre-processd values
 func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
 	if clientCfg.logger.Level == logrus.DebugLevel {
 		for i, v := range fields {

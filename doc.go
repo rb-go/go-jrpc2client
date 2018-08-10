@@ -5,11 +5,16 @@
 /*
 Package jrpc2client implements client for json-rpc 2.0 protocol and based on another packages:
 
+
 HTTP Client: github.com/erikdubbelboer/fasthttp
+
 JSON Parser: github.com/pquerna/ffjson/ffjson
+
 Logger: github.com/Sirupsen/logrus
 
+
 Example can be found only in client_test.go at this moment
+
 
 You can see your godoc rendered as HTML by running a local godoc server.
 This is great for previewing your godoc before committing changes. To do
