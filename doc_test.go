@@ -2,8 +2,9 @@ package jrpc2client_test
 
 import (
 	"fmt"
-	"github.com/riftbit/jrpc2client"
 	"time"
+
+	"github.com/riftbit/jrpc2client"
 )
 
 // This function is named ExampleClient_Call(), this way godoc knows to associate
