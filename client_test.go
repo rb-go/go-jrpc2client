@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
-	"github.com/riftbit/fasthttp_json_rpc2"
+	"github.com/riftbit/jrpc2server"
 )
 
 // DemoAPI area
@@ -26,7 +26,7 @@ type TestReply struct {
 // Test Method to test
 func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
 	if args.ID == "" {
-		return &jsonrpc2.Error{Code: jsonrpc2.E_BAD_PARAMS, Message: "ID should not be empty"}
+		return &jrpc2server.Error{Code: jsonrpc2.JErrorBadParams, Message: "ID should not be empty"}
 	}
 	reply.LogID = args.ID
 	return nil
@@ -34,7 +34,7 @@ func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestRepl
 
 func TestPrepare(t *testing.T) {
 
-	api := jsonrpc2.NewServer()
+	api := jrpc2server.NewServer()
 	err := api.RegisterService(new(DemoAPI), "demo")
 
 	if err != nil {
