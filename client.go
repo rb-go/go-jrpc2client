@@ -6,6 +6,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
+	"sync"
 )
 
 func getDefaultHeadersMap() map[string]string {
@@ -16,6 +17,11 @@ func getDefaultHeadersMap() map[string]string {
 
 func createNewClient(logger *logrus.Logger) *Client {
 	return &Client{
+		clientPool: &sync.Pool{
+			New: func() interface{} {
+				return new(fasthttp.Client)
+			},
+		},
 		customHeaders: getDefaultHeadersMap(),
 		logger:        logger,
 	}
@@ -69,7 +75,6 @@ func (cl *Client) SetUserAgent(userAgent string) {
 func (cl *Client) makeCallRequest(urlPath string, method string, args interface{}) ([]byte, error) {
 	req := fasthttp.AcquireRequest()
 	defer req.Reset()
-
 	req.SetRequestURI(cl.BaseURL + urlPath)
 
 	for key, val := range cl.customHeaders {
@@ -86,11 +91,13 @@ func (cl *Client) makeCallRequest(urlPath string, method string, args interface{
 
 	req.SetBody(byteBody)
 	resp := fasthttp.AcquireResponse()
-	client := &fasthttp.Client{}
+	defer resp.Reset()
+
+	client := cl.clientPool.Get().(*fasthttp.Client)
 	if err := client.Do(req, resp); err != nil {
 		return nil, err
 	}
-
+	cl.clientPool.Put(client)
 	debugLogging(cl, logrus.Fields{"headers": req.Header.String(), "response": resp.Body()}, "response received")
 	return resp.Body(), nil
 }

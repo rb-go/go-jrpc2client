@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"sync"
 )
 
 // ErrorCode type for error codes
@@ -45,6 +46,7 @@ type Client struct {
 	writeTimeout      time.Time
 	readTimeout       time.Time
 	customHeaders     map[string]string
+	clientPool        *sync.Pool
 	logger            *logrus.Logger
 }
 

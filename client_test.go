@@ -103,9 +103,9 @@ func TestBasicAuthClient(t *testing.T) {
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuthHeader("user", "password")
 	dstP := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClient"}, dstP)
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicAuthClient"}, dstP)
 	assert.Nil(t, err)
-	assert.Equal(t, "TESTER_ID_TestLoggingClient", dstP.LogID)
+	assert.Equal(t, "TESTER_ID_TestBasicAuthClient", dstP.LogID)
 }
 
 func TestLoggingDevNullClient(t *testing.T) {
@@ -119,7 +119,7 @@ func TestLoggingDevNullClient(t *testing.T) {
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingDevNullClient"}, dstP)
 	assert.Nil(t, err)
-	assert.Equal(t, "TESTER_ID_TestLoggingClient", dstP.LogID)
+	assert.Equal(t, "TESTER_ID_TestLoggingDevNullClient", dstP.LogID)
 }
 
 func TestLoggingClient(t *testing.T) {
