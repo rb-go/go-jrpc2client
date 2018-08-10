@@ -148,3 +148,36 @@ func TestMapBasicClient(t *testing.T) {
 		assert.Equal(t, "TESTER_ID_TestMapBasicClient", val)
 	}
 }
+
+func TestDoubleCallBasicClient(t *testing.T) {
+	client := NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	dstP := &TestReply{}
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestDoubleCallBasicClient_1"}, dstP)
+	assert.Nil(t, err)
+	assert.Equal(t, "TESTER_ID_TestDoubleCallBasicClient_1", dstP.LogID)
+	err = client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestDoubleCallBasicClient_2"}, dstP)
+	assert.Nil(t, err)
+	assert.Equal(t, "TESTER_ID_TestDoubleCallBasicClient_2", dstP.LogID)
+
+}
+
+func TestTrippleCallBasicClient(t *testing.T) {
+	client := NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	dstP := &TestReply{}
+
+	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestTrippleCallBasicClient_1"}, dstP)
+	assert.Nil(t, err)
+	assert.Equal(t, "TESTER_ID_TestTrippleCallBasicClient_1", dstP.LogID)
+
+	err = client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestTrippleCallBasicClient_2"}, dstP)
+	assert.Nil(t, err)
+	assert.Equal(t, "TESTER_ID_TestTrippleCallBasicClient_2", dstP.LogID)
+
+	client.SetUserAgent("JsonRPC Test Client")
+	err = client.Call("/api", "demo.TestUserAgent", TestArgs{ID: "TESTER_ID_TestTrippleCallBasicClient_3"}, dstP)
+	assert.Nil(t, err)
+	assert.Equal(t, "JsonRPC Test Client", dstP.UserAgent)
+
+}
