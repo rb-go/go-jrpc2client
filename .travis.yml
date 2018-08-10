@@ -7,6 +7,7 @@ os:
 - linux
 
 go:
+- 1.9
 - 1.10.3
 - tip
 
@@ -27,7 +28,6 @@ notifications:
 
 install:
 - go get -t ./...
-- go get -u github.com/stretchr/testify/assert
 - go get -u github.com/golang/lint/golint
 - go get -u golang.org/x/tools/cmd/goimports
 - go get -u golang.org/x/tools/cmd/cover
