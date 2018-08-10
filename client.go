@@ -3,11 +3,11 @@ package jrpc2client
 import (
 	"encoding/base64"
 	"os"
+	"sync"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
-	"sync"
-	"time"
 )
 
 func getDefaultHeadersMap() map[string]string {

@@ -3,10 +3,10 @@ package jrpc2client
 import (
 	"encoding/json"
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"sync"
 )
 
 // ErrorCode type for error codes
@@ -32,7 +32,7 @@ const (
 	// JErrorServer Server error - Reserved for implementation-defined server-errors.
 	JErrorServer ErrorCode = -32000
 
-	userAgent string = "RIFTBIT-GOLANG-JRPC2-CLIENT"
+	userAgent string = "RIFTBIT-JRPC2-CLIENT"
 )
 
 // ErrNullResult it returns error when result answer is empty

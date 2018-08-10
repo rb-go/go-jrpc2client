@@ -1,4 +1,4 @@
-package jrpc2client
+package jrpc2client_test
 
 import (
 	"io/ioutil"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
+	"github.com/riftbit/jrpc2client"
 	"github.com/riftbit/jrpc2server"
 	"github.com/stretchr/testify/assert"
 	"time"
@@ -63,7 +64,7 @@ func TestPrepare(t *testing.T) {
 }
 
 func TestBasicClientErrorOnWrongAddress(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:12345")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstP)
@@ -71,7 +72,7 @@ func TestBasicClientErrorOnWrongAddress(t *testing.T) {
 }
 
 func TestBasicClientErrorOnAPIFormat(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://yandex.ru")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstP)
@@ -79,7 +80,7 @@ func TestBasicClientErrorOnAPIFormat(t *testing.T) {
 }
 
 func TestBasicClientErrorOnAPIAnwser(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstP)
@@ -87,16 +88,16 @@ func TestBasicClientErrorOnAPIAnwser(t *testing.T) {
 }
 
 func TestDefaultUserAgentClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.TestUserAgent", TestArgs{ID: "TESTER_ID_TestDefaultUserAgentClient"}, dstP)
 	assert.Nil(t, err)
-	assert.Equal(t, userAgent, dstP.UserAgent)
+	assert.Equal(t, "RIFTBIT-JRPC2-CLIENT", dstP.UserAgent)
 }
 
 func TestCustomUserAgentClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	client.SetUserAgent("JsonRPC Test Client")
 	dstP := &TestReply{}
@@ -106,7 +107,7 @@ func TestCustomUserAgentClient(t *testing.T) {
 }
 
 func TestBasicAuthClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuthHeader("user", "password")
@@ -122,7 +123,7 @@ func TestLoggingDevNullClient(t *testing.T) {
 		Formatter: &logrus.JSONFormatter{DisableTimestamp: false},
 		Level:     logrus.DebugLevel,
 	}
-	client := NewClientWithLogger(logger)
+	client := jrpc2client.NewClientWithLogger(logger)
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingDevNullClient"}, dstP)
@@ -136,7 +137,7 @@ func TestLoggingClient(t *testing.T) {
 		Formatter: &logrus.JSONFormatter{DisableTimestamp: false},
 		Level:     logrus.DebugLevel,
 	}
-	client := NewClientWithLogger(logger)
+	client := jrpc2client.NewClientWithLogger(logger)
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingClient"}, dstP)
@@ -145,7 +146,7 @@ func TestLoggingClient(t *testing.T) {
 }
 
 func TestMapBasicClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuthHeader("user", "password")
@@ -158,7 +159,7 @@ func TestMapBasicClient(t *testing.T) {
 }
 
 func TestDoubleCallBasicClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 
@@ -173,7 +174,7 @@ func TestDoubleCallBasicClient(t *testing.T) {
 }
 
 func TestTrippleCallBasicClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 
@@ -192,7 +193,7 @@ func TestTrippleCallBasicClient(t *testing.T) {
 }
 
 func TestTimeoutFailedClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	client.SetClientTimeout(10 * time.Millisecond)
@@ -201,7 +202,7 @@ func TestTimeoutFailedClient(t *testing.T) {
 }
 
 func TestTimeoutSuccessClient(t *testing.T) {
-	client := NewClient()
+	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
 	client.SetClientTimeout(1 * time.Second)
