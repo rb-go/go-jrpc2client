@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT License that can be found in
 // the LICENSE file.
 
-// Package jrpc2_client implements client for json-rpc 2.0 protocol
+// Package jrpc2client implements client for json-rpc 2.0 protocol
 // and based on another packages:
 // - HTTP Client: github.com/erikdubbelboer/fasthttp
 // - JSON Parser: github.com/pquerna/ffjson/ffjson

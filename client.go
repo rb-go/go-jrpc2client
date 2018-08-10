@@ -24,7 +24,7 @@ func NewClient() *Client {
 func NewClientWithLogger(logger *logrus.Logger) *Client {
 	return &Client{
 		customHeaders: make(map[string]string),
-		logger: logger,
+		logger:        logger,
 	}
 }
 
