@@ -23,6 +23,7 @@ func NewClient() *Client {
 // NewClientWithLogger returns new configured Client with custom Logger configureation (based on Sirupsen/logrus) to start work with JSON-RPC 2.0 protocol
 func NewClientWithLogger(logger *logrus.Logger) *Client {
 	return &Client{
+		customHeaders: make(map[string]string),
 		logger: logger,
 	}
 }

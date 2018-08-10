@@ -11,6 +11,11 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 )
 
+func printObject(v interface{}) string {
+	res2B, _ := ffjson.Marshal(v)
+	return string(res2B)
+}
+
 func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
 	if clientCfg.logger.Level == logrus.DebugLevel {
 		for i, v := range fields {
