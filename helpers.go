@@ -8,13 +8,11 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/erikdubbelboer/fasthttp"
 	"github.com/pquerna/ffjson/ffjson"
 )
 
 func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
-	if clientCfg.Logger.Level == logrus.DebugLevel {
-
+	if clientCfg.logger.Level == logrus.DebugLevel {
 		for i, v := range fields {
 			if reflect.TypeOf(v).String() == "[]uint8" {
 				fields[i] = strings.Split(string(v.([]uint8)), "\r\n")
@@ -23,21 +21,8 @@ func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
 			if i == "headers" && reflect.TypeOf(v).String() == "string" {
 				fields[i] = strings.Split(fields[i].(string), "\r\n")
 			}
-
 		}
-		clientCfg.Logger.WithFields(fields).Debugln(message)
-	}
-}
-
-func setHeadersFromConfig(clientCfg *Client, req *fasthttp.Request) {
-	if clientCfg.UserAgent != "" {
-		req.Header.SetUserAgent(clientCfg.UserAgent)
-	} else {
-		req.Header.SetUserAgent("RIFTBIT-GOLANG-JRPC2-CLIENT")
-	}
-
-	if clientCfg.Authentificate != "" {
-		req.Header.Set("Authorization", clientCfg.Authentificate)
+		clientCfg.logger.WithFields(fields).Debugln(message)
 	}
 }
 
@@ -53,23 +38,24 @@ func encodeClientRequest(method string, args interface{}) ([]byte, error) {
 }
 
 // decodeClientResponse decodes the response body of a client request into the interface reply.
-func decodeClientResponse(r []byte, dst interface{}) error {
+func decodeClientResponse(r []byte) (interface{}, error) {
 	var c clientResponse
 	if err := ffjson.NewDecoder().Decode(r, &c); err != nil {
-		return &Error{Code: JErrorParse, Message: err.Error()}
+		return nil, &Error{Code: JErrorParse, Message: err.Error()}
 	}
 	if c.Error != nil {
 		jsonErr := &Error{}
 		if err := ffjson.Unmarshal(*c.Error, jsonErr); err != nil {
-			return &Error{Code: JErrorInternal, Message: string(*c.Error)}
+			return nil, &Error{Code: JErrorInternal, Message: string(*c.Error)}
 		}
-		return jsonErr
+		return nil, jsonErr
 	}
 	if c.Result == nil {
-		return &Error{Code: JErrorServer, Message: ErrNullResult.Error()}
+		return nil, &Error{Code: JErrorServer, Message: ErrNullResult.Error()}
 	}
+	var dst interface{}
 	if err := ffjson.Unmarshal(*c.Result, &dst); err != nil {
-		return &Error{Code: JErrorInternal, Message: ErrNullResult.Error()}
+		return nil, &Error{Code: JErrorInternal, Message: ErrNullResult.Error()}
 	}
-	return nil
+	return dst, nil
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
-	"github.com/riftbit/fasthttp_json_rpc2"
+	"github.com/riftbit/jrpc2server"
 )
 
 // DemoAPI area
@@ -26,7 +26,7 @@ type TestReply struct {
 // Test Method to test
 func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
 	if args.ID == "" {
-		return &jsonrpc2.Error{Code: jsonrpc2.E_BAD_PARAMS, Message: "ID should not be empty"}
+		return &jrpc2server.Error{Code: jrpc2server.JErrorInvalidParams, Message: "ID should not be empty"}
 	}
 	reply.LogID = args.ID
 	return nil
@@ -34,7 +34,7 @@ func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestRepl
 
 func TestPrepare(t *testing.T) {
 
-	api := jsonrpc2.NewServer()
+	api := jrpc2server.NewServer()
 	err := api.RegisterService(new(DemoAPI), "demo")
 
 	if err != nil {
@@ -60,8 +60,7 @@ func TestBasicClientErrorOnWrongAddress(t *testing.T) {
 	client.SetBaseURL("http://127.0.0.1:12345")
 	client.SetUserAgent("JsonRPC Test Client")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnWrongAddress"}, dstT)
+	_, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnWrongAddress"})
 	if err == nil {
 		t.Error(errors.New("expected error but not received"))
 	}
@@ -74,8 +73,7 @@ func TestBasicClientErrorOnAPIFormat(t *testing.T) {
 	client.SetBaseURL("http://yandex.ru")
 	client.SetUserAgent("JsonRPC Test Client")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnAPIFormat"}, dstT)
+	_, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientErrorOnAPIFormat"})
 	if err == nil {
 		t.Error(errors.New("expected error but not received"))
 	}
@@ -88,8 +86,7 @@ func TestBasicClientErrorOnAPIAnser(t *testing.T) {
 	client.SetBaseURL("http://127.0.0.1:65001")
 	client.SetUserAgent("JsonRPC Test Client")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstT)
+	_, err := client.Call("/api", "demo.Test", TestArgs{ID: ""})
 	if err == nil {
 		t.Error(errors.New("expected error but not received"))
 	}
@@ -103,12 +100,11 @@ func TestBasicClient(t *testing.T) {
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuth("user", "password")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClient"}, dstT)
+	dstT, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClient"})
 	if err != nil {
 		t.Error(err)
 	}
-	if dstT.LogID != "TESTER_ID_TestBasicClient" {
+	if dstT.(TestReply).LogID != "TESTER_ID_TestBasicClient" {
 		t.Error("unexpected answer in LogID")
 	}
 }
@@ -119,12 +115,11 @@ func TestBasicClientWithDefaultUserAgent(t *testing.T) {
 
 	client.SetBaseURL("http://127.0.0.1:65001")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientWithDefaultUserAgent"}, dstT)
+	dstT, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestBasicClientWithDefaultUserAgent"})
 	if err != nil {
 		t.Error(err)
 	}
-	if dstT.LogID != "TESTER_ID_TestBasicClientWithDefaultUserAgent" {
+	if dstT.(TestReply).LogID != "TESTER_ID_TestBasicClientWithDefaultUserAgent" {
 		t.Error("unexpected answer in LogID")
 	}
 }
@@ -142,12 +137,11 @@ func TestLoggingDevNullClient(t *testing.T) {
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuth("user", "password")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingDevNullClient"}, dstT)
+	dstT, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingDevNullClient"})
 	if err != nil {
 		t.Error(err)
 	}
-	if dstT.LogID != "TESTER_ID_TestLoggingDevNullClient" {
+	if dstT.(TestReply).LogID != "TESTER_ID_TestLoggingDevNullClient" {
 		t.Error("unexpected answer in LogID")
 	}
 }
@@ -165,12 +159,11 @@ func TestLoggingClient(t *testing.T) {
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuth("user", "password")
 
-	dstT := &TestReply{}
-	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingClient"}, dstT)
+	dstT, err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingClient"})
 	if err != nil {
 		t.Error(err)
 	}
-	if dstT.LogID != "TESTER_ID_TestLoggingClient" {
+	if dstT.(TestReply).LogID != "TESTER_ID_TestLoggingClient" {
 		t.Error("unexpected answer in LogID")
 	}
 }
