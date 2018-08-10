@@ -104,7 +104,7 @@ func TestClient_CallForMap(t *testing.T) {
 
 func TestClient_CallForMap_WrongAddress(t *testing.T) {
 	client := jrpc2client.NewClient()
-	client.SetBaseURL("http://127.0.0.1:65001")
+	client.SetBaseURL("http://127.0.0.1:12345")
 	client.SetUserAgent("JsonRPC Test Client")
 	client.SetBasicAuthHeader("user", "password")
 	_, err := client.CallForMap("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestMapBasicClient"})
