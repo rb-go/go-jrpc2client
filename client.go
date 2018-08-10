@@ -8,24 +8,27 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 )
 
+func getDefaultHeadersMap() map[string]string {
+	headers := make(map[string]string)
+	headers["User-Agent"] = userAgent
+	return headers
+}
+
+func createNewClient(logger *logrus.Logger) *Client {
+	return &Client{
+		customHeaders: getDefaultHeadersMap(),
+		logger:        logger,
+	}
+}
+
 // NewClient returns new configured Client to start work with JSON-RPC 2.0 protocol
 func NewClient() *Client {
-	return &Client{
-		customHeaders: make(map[string]string),
-		logger: &logrus.Logger{
-			Out:       os.Stdout,
-			Formatter: &logrus.JSONFormatter{DisableTimestamp: false},
-			Level:     logrus.WarnLevel,
-		},
-	}
+	return createNewClient(&logrus.Logger{Out: os.Stdout, Formatter: &logrus.JSONFormatter{DisableTimestamp: false}, Level: logrus.WarnLevel})
 }
 
 // NewClientWithLogger returns new configured Client with custom Logger configureation (based on Sirupsen/logrus) to start work with JSON-RPC 2.0 protocol
 func NewClientWithLogger(logger *logrus.Logger) *Client {
-	return &Client{
-		customHeaders: make(map[string]string),
-		logger:        logger,
-	}
+	return createNewClient(logger)
 }
 
 // SetBaseURL setting basic url for API
@@ -33,23 +36,41 @@ func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseURL = baseURL
 }
 
-// SetBasicAuth setting basic auth header
-func (cl *Client) SetBasicAuth(login string, password string) {
-	cl.customHeaders["Authorization"] = "Basic " + base64.StdEncoding.EncodeToString([]byte(login+":"+password))
+// SetCustomHeader setting custom header
+func (cl *Client) SetCustomHeader(headerName string, headerValue string) {
+	cl.customHeaders[headerName] = headerValue
+}
+
+// DeleteCustomHeader delete custom header
+func (cl *Client) DeleteCustomHeader(headerName string) {
+	delete(cl.customHeaders, headerName)
+}
+
+// SetBasicAuthHeader setting basic auth header
+func (cl *Client) SetBasicAuthHeader(login string, password string) {
+	cl.SetCustomHeader("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(login+":"+password)))
+}
+
+// SetCustomAuthHeader setting custom auth header with type of auth and auth data
+func (cl *Client) SetCustomAuthHeader(authType string, authData string) {
+	cl.SetCustomHeader("Authorization", authType+" "+authData)
+}
+
+// DeleteAuthHeader clear basic auth header
+func (cl *Client) DeleteAuthHeader() {
+	cl.DeleteCustomHeader("Authorization")
 }
 
 // SetUserAgent setting custom User Agent header
 func (cl *Client) SetUserAgent(userAgent string) {
-	cl.customHeaders["User-Agent"] = userAgent
+	cl.SetCustomHeader("User-Agent", userAgent)
 }
 
-// Call run remote procedure on JSON-RPC 2.0 API
-func (cl *Client) Call(urlPath string, method string, args interface{}) (interface{}, error) {
+func (cl *Client) makeCallRequest(urlPath string, method string, args interface{}) ([]byte, error) {
 	req := fasthttp.AcquireRequest()
 	defer req.Reset()
 
 	req.SetRequestURI(cl.BaseURL + urlPath)
-	req.Header.SetUserAgent(userAgent)
 
 	for key, val := range cl.customHeaders {
 		req.Header.Set(key, val)
@@ -61,10 +82,7 @@ func (cl *Client) Call(urlPath string, method string, args interface{}) (interfa
 		return nil, err
 	}
 
-	tmp := logrus.Fields{}
-	tmp["headers"] = req.Header.String()
-	tmp["request"] = byteBody
-	debugLogging(cl, tmp, "request prepared")
+	debugLogging(cl, logrus.Fields{"headers": req.Header.String(), "request": byteBody}, "request prepared")
 
 	req.SetBody(byteBody)
 	resp := fasthttp.AcquireResponse()
@@ -73,16 +91,33 @@ func (cl *Client) Call(urlPath string, method string, args interface{}) (interfa
 		return nil, err
 	}
 
-	tmp = logrus.Fields{}
-	tmp["headers"] = req.Header.String()
-	tmp["response"] = resp.Body()
-	debugLogging(cl, tmp, "response received")
+	debugLogging(cl, logrus.Fields{"headers": req.Header.String(), "response": resp.Body()}, "response received")
+	return resp.Body(), nil
+}
 
-	return decodeClientResponse(resp.Body())
+// Call run remote procedure on JSON-RPC 2.0 API with parsing answer to provided structure or interface
+func (cl *Client) Call(urlPath string, method string, args interface{}, dst interface{}) error {
+	resp, err := cl.makeCallRequest(urlPath, method, args)
+	if err != nil {
+		return err
+	}
+	err = decodeClientResponse(resp, &dst)
+	return err
+}
+
+// Call run remote procedure on JSON-RPC 2.0 API with returning map[string]interface{}
+func (cl *Client) CallForMap(urlPath string, method string, args interface{}) (map[string]interface{}, error) {
+	resp, err := cl.makeCallRequest(urlPath, method, args)
+	if err != nil {
+		return nil, err
+	}
+	dst := make(map[string]interface{})
+	err = decodeClientResponse(resp, &dst)
+	return dst, err
 }
 
 /*
-func (cl *Client) BatchCall(urlPath string, method string, args interface{}) {
+func (cl *Client) CallBatch(urlPath string, method string, args interface{}) {
 
 }
 
