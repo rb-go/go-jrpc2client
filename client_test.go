@@ -89,6 +89,28 @@ func TestClient_Call_WrongAPIAnswer(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestClient_CallForMap(t *testing.T) {
+	client := jrpc2client.NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	client.SetUserAgent("JsonRPC Test Client")
+	client.SetBasicAuthHeader("user", "password")
+	dstT, err := client.CallForMap("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestMapBasicClient"})
+	assert.Nil(t, err)
+	val, ok := dstT["log_id"]
+	if assert.NotEqual(t, ok, false) {
+		assert.Equal(t, "TESTER_ID_TestMapBasicClient", val)
+	}
+}
+
+func TestClient_CallForMap_WrongAddress(t *testing.T) {
+	client := jrpc2client.NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	client.SetUserAgent("JsonRPC Test Client")
+	client.SetBasicAuthHeader("user", "password")
+	_, err := client.CallForMap("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestMapBasicClient"})
+	assert.NotNil(t, err)
+}
+
 func TestClient_SetUserAgent_default(t *testing.T) {
 	client := jrpc2client.NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
@@ -144,19 +166,6 @@ func TestNewClientWithLogger(t *testing.T) {
 	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestLoggingClient"}, dstP)
 	assert.Nil(t, err)
 	assert.Equal(t, "TESTER_ID_TestLoggingClient", dstP.LogID)
-}
-
-func TestClient_CallForMap(t *testing.T) {
-	client := jrpc2client.NewClient()
-	client.SetBaseURL("http://127.0.0.1:65001")
-	client.SetUserAgent("JsonRPC Test Client")
-	client.SetBasicAuthHeader("user", "password")
-	dstT, err := client.CallForMap("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestMapBasicClient"})
-	assert.Nil(t, err)
-	val, ok := dstT["log_id"]
-	if assert.NotEqual(t, ok, false) {
-		assert.Equal(t, "TESTER_ID_TestMapBasicClient", val)
-	}
 }
 
 func TestClient_Call_double(t *testing.T) {
