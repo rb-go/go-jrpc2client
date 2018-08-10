@@ -9,6 +9,7 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 	"github.com/riftbit/jrpc2server"
 	"github.com/stretchr/testify/assert"
+	"time"
 )
 
 // DemoAPI area
@@ -35,6 +36,13 @@ func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestRepl
 
 // TestUserAgent Method to test user agent value
 func (h *DemoAPI) TestUserAgent(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
+	reply.UserAgent = string(ctx.Request.Header.UserAgent())
+	return nil
+}
+
+// TestUserAgent Method to test user agent value
+func (h *DemoAPI) TestClientTimeout(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
+	time.Sleep(100 * time.Millisecond)
 	reply.UserAgent = string(ctx.Request.Header.UserAgent())
 	return nil
 }
@@ -153,9 +161,11 @@ func TestDoubleCallBasicClient(t *testing.T) {
 	client := NewClient()
 	client.SetBaseURL("http://127.0.0.1:65001")
 	dstP := &TestReply{}
+
 	err := client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestDoubleCallBasicClient_1"}, dstP)
 	assert.Nil(t, err)
 	assert.Equal(t, "TESTER_ID_TestDoubleCallBasicClient_1", dstP.LogID)
+
 	err = client.Call("/api", "demo.Test", TestArgs{ID: "TESTER_ID_TestDoubleCallBasicClient_2"}, dstP)
 	assert.Nil(t, err)
 	assert.Equal(t, "TESTER_ID_TestDoubleCallBasicClient_2", dstP.LogID)
@@ -179,5 +189,22 @@ func TestTrippleCallBasicClient(t *testing.T) {
 	err = client.Call("/api", "demo.TestUserAgent", TestArgs{ID: "TESTER_ID_TestTrippleCallBasicClient_3"}, dstP)
 	assert.Nil(t, err)
 	assert.Equal(t, "JsonRPC Test Client", dstP.UserAgent)
+}
 
+func TestTimeoutFailedClient(t *testing.T) {
+	client := NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	dstP := &TestReply{}
+	client.SetClientTimeout(10 * time.Millisecond)
+	err := client.Call("/api", "demo.TestClientTimeout", TestArgs{ID: ""}, dstP)
+	assert.NotNil(t, err)
+}
+
+func TestTimeoutSuccessClient(t *testing.T) {
+	client := NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	dstP := &TestReply{}
+	client.SetClientTimeout(1 * time.Second)
+	err := client.Call("/api", "demo.TestClientTimeout", TestArgs{ID: ""}, dstP)
+	assert.Nil(t, err)
 }

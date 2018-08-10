@@ -7,6 +7,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/erikdubbelboer/fasthttp"
 	"sync"
+	"time"
 )
 
 func getDefaultHeadersMap() map[string]string {
@@ -40,6 +41,11 @@ func NewClientWithLogger(logger *logrus.Logger) *Client {
 // SetBaseURL setting basic url for API
 func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseURL = baseURL
+}
+
+// SetClientTimeout this method sets globally for client its timeout
+func (cl *Client) SetClientTimeout(duration time.Duration) {
+	cl.clientTimeout = duration
 }
 
 // SetCustomHeader setting custom header
@@ -94,9 +100,17 @@ func (cl *Client) makeCallRequest(urlPath string, method string, args interface{
 	defer resp.Reset()
 
 	client := cl.clientPool.Get().(*fasthttp.Client)
-	if err := client.Do(req, resp); err != nil {
-		return nil, err
+
+	if cl.clientTimeout == 0 {
+		if err := client.Do(req, resp); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := client.DoTimeout(req, resp, cl.clientTimeout); err != nil {
+			return nil, err
+		}
 	}
+
 	cl.clientPool.Put(client)
 	debugLogging(cl, logrus.Fields{"headers": req.Header.String(), "response": resp.Body()}, "response received")
 	return resp.Body(), nil
@@ -112,7 +126,7 @@ func (cl *Client) Call(urlPath string, method string, args interface{}, dst inte
 	return err
 }
 
-// Call run remote procedure on JSON-RPC 2.0 API with returning map[string]interface{}
+// CallForMap run remote procedure on JSON-RPC 2.0 API with returning map[string]interface{}
 func (cl *Client) CallForMap(urlPath string, method string, args interface{}) (map[string]interface{}, error) {
 	resp, err := cl.makeCallRequest(urlPath, method, args)
 	if err != nil {
