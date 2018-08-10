@@ -228,3 +228,11 @@ func TestClient_DeleteCustomHeaderClient(t *testing.T) {
 	err := client.Call("/api", "demo.TestClientTimeout", TestArgs{ID: ""}, dstP)
 	assert.Nil(t, err)
 }
+
+func TestError_Error(t *testing.T) {
+	client := jrpc2client.NewClient()
+	client.SetBaseURL("http://127.0.0.1:65001")
+	dstP := &TestReply{}
+	err := client.Call("/api", "demo.Test", TestArgs{ID: ""}, dstP)
+	assert.Equal(t, "ID should not be empty", err.Error())
+}
