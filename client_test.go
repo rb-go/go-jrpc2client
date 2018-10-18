@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/erikdubbelboer/fasthttp"
 	"github.com/riftbit/jrpc2client"
 	"github.com/riftbit/jrpc2server"
 	"github.com/stretchr/testify/assert"
+	"github.com/valyala/fasthttp"
 )
 
 // DemoAPI area
