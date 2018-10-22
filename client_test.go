@@ -8,6 +8,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/riftbit/jrpc2client"
+	"github.com/riftbit/jrpc2errors"
 	"github.com/riftbit/jrpc2server"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
@@ -28,7 +29,7 @@ type TestReply struct {
 // Test Method to test
 func (h *DemoAPI) Test(ctx *fasthttp.RequestCtx, args *TestArgs, reply *TestReply) error {
 	if args.ID == "" {
-		return &jrpc2server.Error{Code: jrpc2server.JErrorInvalidParams, Message: "ID should not be empty"}
+		return &jrpc2errors.Error{Code: jrpc2errors.InvalidParamsError, Message: "ID should not be empty"}
 	}
 	reply.LogID = args.ID
 	reply.UserAgent = string(ctx.Request.Header.UserAgent())

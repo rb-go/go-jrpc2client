@@ -12,6 +12,8 @@ JSON Parser: github.com/pquerna/ffjson/ffjson
 
 Logger: github.com/Sirupsen/logrus
 
+Errors: github.com/riftbit/jrpc2errors
+
 
 Example can be found only in client_test.go at this moment
 

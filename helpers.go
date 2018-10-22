@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/pquerna/ffjson/ffjson"
+	"github.com/riftbit/jrpc2errors"
 )
 
 // func printObject(v interface{}) string {
@@ -45,21 +46,21 @@ func encodeClientRequest(method string, args interface{}) ([]byte, error) {
 func decodeClientResponse(r []byte, dst interface{}) error {
 	var c clientResponse
 	if err := ffjson.NewDecoder().Decode(r, &c); err != nil {
-		return &Error{Code: JErrorParse, Message: err.Error()}
+		return &jrpc2errors.Error{Code: jrpc2errors.ParseError, Message: err.Error()}
 	}
 	if c.Error != nil {
-		jsonErr := &Error{}
+		jsonErr := &jrpc2errors.Error{}
 		if err := ffjson.Unmarshal(*c.Error, jsonErr); err != nil {
-			return &Error{Code: JErrorInternal, Message: string(*c.Error)}
+			return &jrpc2errors.Error{Code: jrpc2errors.InternalError, Message: string(*c.Error)}
 		}
 		return jsonErr
 	}
 	if c.Result == nil {
-		return &Error{Code: JErrorServer, Message: ErrNullResult.Error()}
+		return &jrpc2errors.Error{Code: jrpc2errors.ServerError, Message: jrpc2errors.ErrNullResult.Error()}
 	}
 
 	if err := ffjson.Unmarshal(*c.Result, &dst); err != nil {
-		return &Error{Code: JErrorInternal, Message: ErrNullResult.Error()}
+		return &jrpc2errors.Error{Code: jrpc2errors.InternalError, Message: jrpc2errors.ErrNullResult.Error()}
 	}
 	return nil
 }
