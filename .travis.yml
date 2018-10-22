@@ -4,13 +4,13 @@ language: go
 #sudo: false
 
 os:
-- linux
+  - linux
 
 go:
-- 1.9
-- 1.10.3
-- 1.11.1
-- tip
+  - 1.9
+  - 1.10.3
+  - 1.11.1
+  - tip
 
 matrix:
   allow_failures:
