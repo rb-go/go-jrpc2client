@@ -3,7 +3,6 @@ package jrpc2client
 import (
 	"math/rand"
 	"reflect"
-	"strconv"
 	"strings"
 
 	"github.com/pquerna/ffjson/ffjson"
