@@ -3,6 +3,7 @@ package jrpc2client
 import (
 	"math/rand"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/pquerna/ffjson/ffjson"
@@ -34,7 +35,7 @@ func debugLogging(clientCfg *Client, fields logrus.Fields, message string) {
 // encodeClientRequest encodes parameters for a JSON-RPC client request.
 func encodeClientRequest(method string, args interface{}) ([]byte, error) {
 	c := &clientRequest{
-		ID:      uint64(rand.Int63()),
+		ID:      rand.Uint64(),
 		Version: "2.0",
 		Method:  method,
 		Params:  args,

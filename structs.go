@@ -43,6 +43,7 @@ type clientRequest struct {
 
 // clientResponse represents a JSON-RPC response returned to a client.
 type clientResponse struct {
+	ID      interface{}      `json:"id"`
 	Version string           `json:"jsonrpc"`
 	Result  *json.RawMessage `json:"result"`
 	Error   *json.RawMessage `json:"error"`
