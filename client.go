@@ -13,6 +13,7 @@ import (
 func getDefaultHeadersMap() map[string]string {
 	headers := make(map[string]string)
 	headers["User-Agent"] = userAgent
+	headers["Content-Type"] = defaultContentType
 	return headers
 }
 

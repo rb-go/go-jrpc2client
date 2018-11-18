@@ -12,7 +12,8 @@ import (
 type ErrorCode int
 
 const (
-	userAgent = "RIFTBIT-JRPC2-CLIENT"
+	userAgent          = "RIFTBIT-JRPC2-CLIENT"
+	defaultContentType = "application/json"
 )
 
 // Client basic struct that contains all method to work with JSON-RPC 2.0 protocol
