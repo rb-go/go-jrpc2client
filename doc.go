@@ -10,7 +10,7 @@ HTTP Client: github.com/valyala/fasthttp
 
 JSON Parser: github.com/pquerna/ffjson/ffjson
 
-Logger: github.com/Sirupsen/logrus
+Logger: github.com/sirupsen/logrus
 
 Errors: github.com/riftbit/jrpc2errors
 

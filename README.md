@@ -12,7 +12,7 @@ This is a json-rpc 2.0 client package for golang based on:
 
  - **HTTP Client:** [erikdubbelboer/fasthttp](github.com/erikdubbelboer/fasthttp)
  - **JSON Parser:** [pquerna/ffjson](github.com/pquerna/ffjson/ffjson)
- - **Logger:** [Sirupsen/logrus](github.com/Sirupsen/logrus)
+ - **Logger:** [Sirupsen/logrus](github.com/sirupsen/logrus)
  - **Errors:** [riftbit/jrpc2errors](github.com/riftbit/jrpc2errors)
 
 to get high perfomance

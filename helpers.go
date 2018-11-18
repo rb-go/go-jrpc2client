@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/riftbit/jrpc2errors"
+	"github.com/sirupsen/logrus"
 )
 
 // func printObject(v interface{}) string {

@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/riftbit/jrpc2client"
 	"github.com/riftbit/jrpc2errors"
 	"github.com/riftbit/jrpc2server"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
 )
