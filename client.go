@@ -44,6 +44,11 @@ func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseURL = baseURL
 }
 
+// SetFixHeaders setting normalize headers or not
+func (cl *Client) DisableHeaderNamesNormalizing(fix bool) {
+	cl.disableHeaderNamesNormalizing = fix
+}
+
 // SetClientTimeout this method sets globally for client its timeout
 func (cl *Client) SetClientTimeout(duration time.Duration) {
 	cl.clientTimeout = duration
@@ -101,6 +106,8 @@ func (cl *Client) makeCallRequest(urlPath string, method string, args interface{
 	defer resp.Reset()
 
 	client := cl.clientPool.Get().(*fasthttp.Client)
+
+	client.DisableHeaderNamesNormalizing = cl.disableHeaderNamesNormalizing
 
 	if cl.clientTimeout == 0 {
 		if err := client.Do(req, resp); err != nil {

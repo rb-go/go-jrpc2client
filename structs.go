@@ -18,11 +18,12 @@ const (
 
 // Client basic struct that contains all method to work with JSON-RPC 2.0 protocol
 type Client struct {
-	BaseURL       string
-	clientTimeout time.Duration
-	customHeaders map[string]string
-	clientPool    *sync.Pool
-	logger        *logrus.Logger
+	disableHeaderNamesNormalizing bool
+	BaseURL                       string
+	clientTimeout                 time.Duration
+	customHeaders                 map[string]string
+	clientPool                    *sync.Pool
+	logger                        *logrus.Logger
 }
 
 // clientRequest represents a JSON-RPC request sent by a client.
