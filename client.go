@@ -44,7 +44,7 @@ func (cl *Client) SetBaseURL(baseURL string) {
 	cl.BaseURL = baseURL
 }
 
-// SetFixHeaders setting normalize headers or not
+// DisableHeaderNamesNormalizing setting normalize headers or not
 func (cl *Client) DisableHeaderNamesNormalizing(fix bool) {
 	cl.disableHeaderNamesNormalizing = fix
 }
